@@ -4,12 +4,16 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 User = get_user_model()
 
+def validate_question_mark(title):
+    if title[0] == '?':
+        raise ValidationError('Заголовок не может начинаться со знака "?"!')
 class Advertisement(models.Model):
-    title = models.CharField('Заголовок', max_length=128)
+    title = models.CharField('Заголовок', max_length=128, validators=[validate_question_mark])
     description = models.TextField('Описание')
     price = models.DecimalField('Цена', max_digits=10, decimal_places=2)
     auction = models.BooleanField('Торг', help_text='Отметьте, если торг уместен')
